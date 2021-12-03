@@ -12,6 +12,7 @@
     <Copyright>Copyright Thomas Woodcock</Copyright>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/thomaswoodcock/ThomasW.Domain.SharedKernel.Results.FluentAssertions</PackageProjectUrl>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageTags>ThomasW.Domain.SharedKernel.Results;results;FluentAssertions;</PackageTags>
     <RepositoryUrl>https://github.com/thomaswoodcock/ThomasW.Domain.SharedKernel.Results.FluentAssertions.git</RepositoryUrl>
   </PropertyGroup>
@@ -37,6 +38,11 @@
   <PropertyGroup>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
+
+  <!-- Included files -->
+  <ItemGroup>
+    <None Include="..\..\README.md" Pack="true" PackagePath="\"/>
+  </ItemGroup>
 
   <!-- References -->
   <ItemGroup>
