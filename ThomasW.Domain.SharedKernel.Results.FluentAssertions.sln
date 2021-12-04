@@ -12,6 +12,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ThomasW.Domain.SharedKernel.Results.FluentAssertions", "src\ThomasW.Domain.SharedKernel.Results.FluentAssertions\ThomasW.Domain.SharedKernel.Results.FluentAssertions.csproj", "{5D338D11-0719-4812-9EE6-17837052D9B8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ThomasW.Domain.SharedKernel.Results.FluentAssertions.UnitTests", "tests\ThomasW.Domain.SharedKernel.Results.FluentAssertions.UnitTests\ThomasW.Domain.SharedKernel.Results.FluentAssertions.UnitTests.csproj", "{831825AD-50BC-46A3-9BFF-535C5B6BDADF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -22,5 +24,9 @@ Global
 		{5D338D11-0719-4812-9EE6-17837052D9B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5D338D11-0719-4812-9EE6-17837052D9B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5D338D11-0719-4812-9EE6-17837052D9B8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{831825AD-50BC-46A3-9BFF-535C5B6BDADF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{831825AD-50BC-46A3-9BFF-535C5B6BDADF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{831825AD-50BC-46A3-9BFF-535C5B6BDADF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{831825AD-50BC-46A3-9BFF-535C5B6BDADF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
