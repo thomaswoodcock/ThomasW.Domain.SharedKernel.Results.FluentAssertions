@@ -44,9 +44,7 @@ public class ResultAssertions : ReferenceTypeAssertions<Result, ResultAssertions
     {
         _ = Execute.Assertion
             .BecauseOf(because, becauseArgs)
-            .ForCondition(this.Subject.IsSuccessful &&
-                          !this.Subject.IsFailed &&
-                          this.Subject.FailureReason == null)
+            .ForCondition(this.Subject.IsSuccessful)
             .FailWith("Expected a successful result{reason}, but found a failed result with the following " +
                       "failure reason: {0}.",
                 this.Subject.FailureReason);
@@ -72,21 +70,62 @@ public class ResultAssertions : ReferenceTypeAssertions<Result, ResultAssertions
     {
         _ = Execute.Assertion
             .BecauseOf(because, becauseArgs)
-            .ForCondition(this.Subject.IsFailed &&
-                          !this.Subject.IsSuccessful &&
-                          this.Subject.FailureReason != null)
+            .ForCondition(this.Subject.IsFailed)
             .FailWith("Expected a failed result{reason}, but found a successful result.");
 
         return new AndConstraint<ResultAssertions>(this);
     }
 
-    /// <inheritdoc cref="ResultAssertions.BeFailed" />
+    /// <summary>
+    ///     Asserts that the <see cref="Result" /> is failed with a specific <see cref="FailureReason" /> object.
+    /// </summary>
+    /// <param name="expected">
+    ///     The expected <see cref="FailureReason" /> object.
+    /// </param>
+    /// <param name="because">
+    ///     A formatted phrase as is supported by <see cref="string.Format(string,object[])" /> explaining why the assertion
+    ///     is needed. If the phrase does not start with the word <i>because</i>, it is prepended automatically.
+    /// </param>
+    /// <param name="becauseArgs">
+    ///     Zero or more objects to format using the placeholders in <paramref name="because" />.
+    /// </param>
+    /// <returns>
+    ///     An <see cref="AndConstraint{T}" /> object.
+    /// </returns>
+    public AndConstraint<ResultAssertions> BeFailed(
+        FailureReason expected, string because = "", params object[] becauseArgs)
+    {
+        using (new AssertionScope())
+        {
+            _ = this.Subject.Should().BeFailed(because, becauseArgs);
+        }
+
+        _ = Execute.Assertion
+            .BecauseOf(because, becauseArgs)
+            .ForCondition(expected == this.Subject.FailureReason)
+            .FailWith("Expected a failure reason matching {0}{reason}, but found {1}.",
+                expected,
+                this.Subject.FailureReason);
+
+        return new AndConstraint<ResultAssertions>(this);
+    }
+
     /// <summary>
     ///     Asserts that the <see cref="Result" /> is failed and has a failure reason of a given type.
     /// </summary>
+    /// <param name="because">
+    ///     A formatted phrase as is supported by <see cref="string.Format(string,object[])" /> explaining why the assertion
+    ///     is needed. If the phrase does not start with the word <i>because</i>, it is prepended automatically.
+    /// </param>
+    /// <param name="becauseArgs">
+    ///     Zero or more objects to format using the placeholders in <paramref name="because" />.
+    /// </param>
     /// <typeparam name="T">
     ///     The expected type of the failure reason.
     /// </typeparam>
+    /// <returns>
+    ///     An <see cref="AndConstraint{T}" /> object.
+    /// </returns>
     public AndConstraint<ResultAssertions> BeFailed<T>(
         string because = "", params object[] becauseArgs)
         where T : FailureReason
@@ -106,7 +145,6 @@ public class ResultAssertions : ReferenceTypeAssertions<Result, ResultAssertions
         return new AndConstraint<ResultAssertions>(this);
     }
 
-    /// <inheritdoc cref="ResultAssertions.BeFailed" />
     /// <summary>
     ///     Asserts that the <see cref="Result" /> is failed and has a failure reason, of a given type, that matches a
     ///     predicate.
@@ -124,6 +162,9 @@ public class ResultAssertions : ReferenceTypeAssertions<Result, ResultAssertions
     /// <typeparam name="T">
     ///     The expected type of the failure reason.
     /// </typeparam>
+    /// <returns>
+    ///     An <see cref="AndConstraint{T}" /> object.
+    /// </returns>
     public AndConstraint<ResultAssertions> BeFailed<T>(
         Expression<Func<T, bool>> predicate,
         string because = "",
@@ -196,6 +237,40 @@ public class ResultAssertions<T> : ReferenceTypeAssertions<Result<T>, ResultAsse
     }
 
     /// <summary>
+    ///     Asserts that the <see cref="Result{T}" /> is successful and its value matches the given expected value.
+    /// </summary>
+    /// <param name="expected">
+    ///     The value that the result is expected to contain.
+    /// </param>
+    /// <param name="because">
+    ///     A formatted phrase as is supported by <see cref="string.Format(string,object[])" /> explaining why the assertion
+    ///     is needed. If the phrase does not start with the word <i>because</i>, it is prepended automatically.
+    /// </param>
+    /// <param name="becauseArgs">
+    ///     Zero or more objects to format using the placeholders in <paramref name="because" />.
+    /// </param>
+    /// <returns>
+    ///     An <see cref="AndConstraint{T}" /> object.
+    /// </returns>
+    public AndConstraint<ResultAssertions<T>> BeSuccessful(
+        T expected, string because = "", params object[] becauseArgs)
+    {
+        using (new AssertionScope())
+        {
+            _ = this.Subject.Should().BeSuccessful(because, becauseArgs);
+        }
+
+        _ = Execute.Assertion
+            .BecauseOf(because, becauseArgs)
+            .ForCondition(this.Subject.Value is { } actual && expected.Equals(actual))
+            .FailWith("Expected {context:result} value to match {0}{reason}, but found {1}.",
+                expected,
+                this.Subject.Value);
+
+        return new AndConstraint<ResultAssertions<T>>(this);
+    }
+
+    /// <summary>
     ///     Asserts that the <see cref="Result{T}" /> is successful and its value matches a given <paramref name="predicate" />.
     /// </summary>
     /// <param name="predicate">
@@ -256,13 +331,51 @@ public class ResultAssertions<T> : ReferenceTypeAssertions<Result<T>, ResultAsse
         return new AndConstraint<ResultAssertions<T>>(this);
     }
 
-    /// <inheritdoc cref="ResultAssertions{T}.BeFailed" />
+    /// <summary>
+    ///     Asserts that the <see cref="Result{T}" /> is failed with a specific <see cref="FailureReason" /> object.
+    /// </summary>
+    /// <param name="expected">
+    ///     The expected <see cref="FailureReason" /> object.
+    /// </param>
+    /// <param name="because">
+    ///     A formatted phrase as is supported by <see cref="string.Format(string,object[])" /> explaining why the assertion
+    ///     is needed. If the phrase does not start with the word <i>because</i>, it is prepended automatically.
+    /// </param>
+    /// <param name="becauseArgs">
+    ///     Zero or more objects to format using the placeholders in <paramref name="because" />.
+    /// </param>
+    /// <returns>
+    ///     An <see cref="AndConstraint{T}" /> object.
+    /// </returns>
+    public AndConstraint<ResultAssertions<T>> BeFailed(
+        FailureReason expected,
+        string because = "",
+        params object[] becauseArgs)
+    {
+        using (new AssertionScope())
+        {
+            _ = ((Result)this.Subject).Should().BeFailed(expected, because, becauseArgs);
+        }
+
+        return new AndConstraint<ResultAssertions<T>>(this);
+    }
+
     /// <summary>
     ///     Asserts that the <see cref="Result{T}" /> is failed and has a failure reason of a given type.
     /// </summary>
+    /// <param name="because">
+    ///     A formatted phrase as is supported by <see cref="string.Format(string,object[])" /> explaining why the assertion
+    ///     is needed. If the phrase does not start with the word <i>because</i>, it is prepended automatically.
+    /// </param>
+    /// <param name="becauseArgs">
+    ///     Zero or more objects to format using the placeholders in <paramref name="because" />.
+    /// </param>
     /// <typeparam name="TReason">
     ///     The expected type of the failure reason.
     /// </typeparam>
+    /// <returns>
+    ///     An <see cref="AndConstraint{T}" /> object.
+    /// </returns>
     public AndConstraint<ResultAssertions<T>> BeFailed<TReason>(
         string because = "",
         params object[] becauseArgs)
@@ -276,7 +389,6 @@ public class ResultAssertions<T> : ReferenceTypeAssertions<Result<T>, ResultAsse
         return new AndConstraint<ResultAssertions<T>>(this);
     }
 
-    /// <inheritdoc cref="ResultAssertions{T}.BeFailed" />
     /// <summary>
     ///     Asserts that the <see cref="Result{T}" /> is failed and has a failure reason, of a given type, that matches a
     ///     predicate.
@@ -294,6 +406,9 @@ public class ResultAssertions<T> : ReferenceTypeAssertions<Result<T>, ResultAsse
     /// <typeparam name="TReason">
     ///     The expected type of the failure reason.
     /// </typeparam>
+    /// <returns>
+    ///     An <see cref="AndConstraint{T}" /> object.
+    /// </returns>
     public AndConstraint<ResultAssertions<T>> BeFailed<TReason>(
         Expression<Func<TReason, bool>> predicate,
         string because = "",

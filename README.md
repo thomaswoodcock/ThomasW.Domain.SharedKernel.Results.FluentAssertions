@@ -35,9 +35,21 @@ public async Task GetUser_InvalidId_ReturnsUser()
 }
 ```
 
-If you want to assert on the value of a successful result, you can pass a
-predicate into the method. The assertion will only pass if the result is
-successful _and_ the predicate evaluates to `true`:
+If you want to assert on the value of a successful result, you can pass in an
+expected value:
+
+```c#
+public async Task GetUser_ValidId_ReturnsUser()
+{
+    // Arrange Act
+    Result<User> result = await this._sut.GetUser(this._userId);
+
+    // Assert
+    result.Should().BeSuccessful(this._user);
+}
+```
+
+Or, if you want a more fine-tuned assertion, you can pass in a predicate:
 
 ```c#
 public async Task GetUser_ValidId_ReturnsUser()
@@ -49,6 +61,10 @@ public async Task GetUser_ValidId_ReturnsUser()
     result.Should().BeSuccessful(user => user.Id == this._userId);
 }
 ```
+
+These two assertions will only pass if the result is successful _and_ the
+expected value matches the actual value, or the predicate evaluates to `true`,
+respectively.
 
 You can also assert on the failure reason by passing a type argument into the
 `IsFailed` method:
@@ -84,3 +100,17 @@ public async Task GetUser_InvalidId_ReturnsUser()
 
 The above assertion will only pass if the result is failed, the failure reason
 matches the passed-in type _and_ the predicate evaluates to `true`.
+
+Finally, if you want to assert against the _exact_ `FailureReason` object, you
+can pass in the object that you expect:
+
+```c#
+public async Task GetUser_InvalidId_ReturnsUser()
+{
+    // Arrange Act
+    Result<User> result = await this._sut.GetUser(Guid.NewGuid());
+
+    // Assert
+    result.Should().BeFailed(this._failureReason);
+}
+```
